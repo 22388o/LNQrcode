@@ -16,14 +16,12 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package io.jlightning.qr.cli
-
-import io.jlightning.qr.cli.plugin.PluginQRCli
+package io.jlightning.qr.cli.ui
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-fun main(args: Array<String>) {
-    val qrCli = PluginQRCli()
-    qrCli.start()
+abstract class AfterRunUIAction {
+
+    abstract fun run()
 }

@@ -16,14 +16,41 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package io.jlightning.qr.cli
+package io.jlightning.qr.cli.ui
 
-import io.jlightning.qr.cli.plugin.PluginQRCli
+import io.vincenzopalazzo.qr.QRCode
+import org.material.component.linklabelui.model.LinkLabel
+import java.awt.BorderLayout
+import javax.swing.ImageIcon
+import javax.swing.JLabel
+import javax.swing.JPanel
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-fun main(args: Array<String>) {
-    val qrCli = PluginQRCli()
-    qrCli.start()
+class QRUIContainer(private val qrcontent: String): JPanel(){
+
+    private lateinit var label: LinkLabel
+    private lateinit var qrImage: ImageIcon
+
+    init {
+        initView()
+    }
+
+    private fun initView(){
+        label = LinkLabel(qrcontent)
+        val imageQr = QRCode.getQrToImage(qrcontent, 300, 300)
+        qrImage = ImageIcon(imageQr)
+
+        initLayout()
+        initActions()
+        isVisible = true
+    }
+
+    private fun initLayout(){
+        layout = BorderLayout()
+        this.add(JLabel(qrImage), BorderLayout.CENTER)
+    }
+
+    private fun initActions(){}
 }
