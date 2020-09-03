@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph.Companion.build
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.71"
-
+    java
     application
 }
 
@@ -28,9 +30,9 @@ application {
     mainClassName = "io.jlightning.qr.cli.AppKt"
 }
 
-
 tasks {
     register("fatJar", Jar::class.java) {
+        dependsOn("build")
         archiveClassifier.set("all")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         manifest {
@@ -42,5 +44,15 @@ tasks {
         val sourcesMain = sourceSets.main.get()
         sourcesMain.allSource.forEach { println("add from sources: ${it.name}") }
         from(sourcesMain.output)
+    }
+
+    register("createRunnableScript") {
+        dependsOn("fatJar")
+        file("${projectDir}/${project.name}-gen.sh").createNewFile()
+        file("${projectDir}/${project.name}-gen.sh").writeText(
+                """
+                #!/bin/bash
+                ${System.getProperties().getProperty("java.home")} -jar ${project.buildDir.absolutePath}/libs/${project.name}-all.jar
+                """.trimIndent())
     }
 }

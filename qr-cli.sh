@@ -1,3 +1,4 @@
+#!/bin/bash
 #     C-lightning plugin to create a small QR code when lightningd made somethings
 #     Copyright (C) 2020 Vincenzo Palazzo vincenzopalazzodev@gmail.com
 
