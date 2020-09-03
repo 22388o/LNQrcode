@@ -3,7 +3,6 @@ plugins {
 
     application
 }
-val mainClass = "io.jlightning.qr.cli.AppKt"
 
 repositories {
     jcenter()
@@ -35,7 +34,7 @@ tasks {
         archiveClassifier.set("all")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         manifest {
-            attributes("Main-Class" to mainClass)
+            attributes("Main-Class" to application.mainClassName)
         }
         from(configurations.runtimeClasspath.get()
                 .onEach { println("add from dependencies: ${it.name}") }
