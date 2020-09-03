@@ -67,7 +67,10 @@ class PluginQRCli: CLightningPlugin() {
         if(listParamter.isNotEmpty()) type = listParamter[0].asString
         val newAddr: String
         if(type.isNotEmpty()){
-            if(type == AddressType.BECH32.name){
+            log(CLightningLevelLog.DEBUG, "Type received: $type")
+            log(CLightningLevelLog.DEBUG, "Type received: ${AddressType.BECH32.value}")
+            log(CLightningLevelLog.DEBUG, "Type received: $type")
+            if(type == AddressType.BECH32.value){
                 newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
             }else{
                 newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.P2SH_SEGWIT)
@@ -76,7 +79,7 @@ class PluginQRCli: CLightningPlugin() {
             newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
         }
         log(CLightningLevelLog.DEBUG, "New address $newAddr")
-        QRCliUI.instance.title = "New address"
+        QRCliUI.instance.title = "${type.toUpperCase()} address"
         QRCliUI.instance.qrContent = newAddr
         SwingUtilities.invokeLater { QRCliUI.instance.initApp() }
         response.apply {
