@@ -15,8 +15,8 @@ dependencies {
     implementation("io.github.material-ui-swing:DarkStackOverflowTheme:0.0.1-rc2")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.1")
     implementation("io.github.material-ui-swing:LinkLabelUI:0.0.1-rc1")
+    implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc1")
 
-    api(fileTree("${project.projectDir}/devlib") { include("JQRInterface-0.0.1-rc1-all.jar") })
     api(fileTree("${project.projectDir}/devlib") { include("jrpclightning-0.1.6-SNAPSHOT.jar") })
 
 

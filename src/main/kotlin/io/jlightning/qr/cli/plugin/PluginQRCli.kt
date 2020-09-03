@@ -24,6 +24,7 @@ import jrpc.clightning.CLightningRPC
 import jrpc.clightning.annotation.RPCMethod
 import jrpc.clightning.annotation.Subscription
 import jrpc.clightning.exceptions.CLightningException
+import jrpc.clightning.model.types.AddressType
 import jrpc.clightning.plugins.CLightningPlugin
 import jrpc.clightning.plugins.log.CLightningLevelLog
 import jrpc.service.converters.jsonwrapper.CLightningJsonObject
@@ -55,7 +56,25 @@ class PluginQRCli: CLightningPlugin() {
                 add("error", e.localizedMessage)
             }
         }
+    }
 
+    @RPCMethod(name = "newaddress", description = "generate a new address and display it on QR code", parameter = "[type]")
+    fun generateAddress(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject){
+        plugin.log(CLightningLevelLog.DEBUG, "newaddress")
+        val type = request["params"].asJsonObject["type"].asString
+        val newAddr: String
+        if(type.isNotEmpty()){
+            if(type == AddressType.BECH32.name){
+                newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
+            }else{
+                newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.P2SH_SEGWIT)
+            }
+        }else{
+            newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
+        }
+        QRCliUI.instance.title = "New address"
+        QRCliUI.instance.qrContent = newAddr
+        SwingUtilities.invokeLater { QRCliUI.instance.initApp() }
     }
 
     @Subscription(notification = "invoice_creation")
