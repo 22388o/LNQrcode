@@ -51,8 +51,9 @@ tasks {
         file("${projectDir}/${project.name}-gen.sh").createNewFile()
         file("${projectDir}/${project.name}-gen.sh").writeText(
                 """
+                # Script generated from gradle! By clightning4j
                 #!/bin/bash
-                ${System.getProperties().getProperty("java.home")} -jar ${project.buildDir.absolutePath}/libs/${project.name}-all.jar
+                ${System.getProperties().getProperty("java.home")}/bin/java -jar ${project.buildDir.absolutePath}/libs/${project.name}-all.jar
                 """.trimIndent())
     }
 }
