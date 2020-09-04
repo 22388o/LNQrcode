@@ -31,6 +31,11 @@ All contributions are welcome, feel free to open a PR or an issue to discuss any
 In addition, this repository needs a maintainer, if you like to contribute on open source software feel free to write 
 an email to [vincenzopalazzodev@gmail.com](mailito:vincenzopalazzodev@gmail.com) 
 
+## Built with
+
+- [JQRInterface](https://gitlab.com/vincenzopalazzo/jconsole-qr)
+- [JRPClightning](https://github.com/vincenzopalazzo/JRPClightning)
+
 ## License
 
 <div align="center">
