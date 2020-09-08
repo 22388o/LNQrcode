@@ -20,6 +20,7 @@ package io.jlightning.qr.cli.plugin
 
 import io.jlightning.qr.cli.ui.AfterRunUIAction
 import io.jlightning.qr.cli.ui.QRCliUI
+import io.vincenzopalazzo.qr.QRCode
 import jrpc.clightning.CLightningRPC
 import jrpc.clightning.annotation.RPCMethod
 import jrpc.clightning.annotation.Subscription
@@ -67,9 +68,6 @@ class PluginQRCli: CLightningPlugin() {
         if(listParamter.isNotEmpty()) type = listParamter[0].asString
         val newAddr: String
         if(type.isNotEmpty()){
-            log(CLightningLevelLog.DEBUG, "Type received: $type")
-            log(CLightningLevelLog.DEBUG, "Type received: ${AddressType.BECH32.value}")
-            log(CLightningLevelLog.DEBUG, "Type received: $type")
             if(type == AddressType.BECH32.value){
                 newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
             }else{

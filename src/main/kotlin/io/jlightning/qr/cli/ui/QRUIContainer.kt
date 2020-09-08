@@ -19,38 +19,104 @@
 package io.jlightning.qr.cli.ui
 
 import io.vincenzopalazzo.qr.QRCode
+import mdlaf.utils.MaterialColors
+import mdlaf.utils.MaterialImageFactory
+import mdlaf.utils.icons.MaterialIconFont
 import org.material.component.linklabelui.model.LinkLabel
-import java.awt.BorderLayout
-import javax.swing.ImageIcon
-import javax.swing.JLabel
-import javax.swing.JPanel
+import org.material.component.linklabelui.view.LinkLabelUI
+import org.material.component.swingsnackbar.SnackBar
+import org.material.component.swingsnackbar.action.AbstractSnackBarAction
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+import java.awt.event.MouseEvent
+import javax.swing.*
+
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-class QRUIContainer(private val qrcontent: String): JPanel(){
+class QRUIContainer(private val frame: JFrame, private val qrcontent: String) : JPanel() {
 
-    private lateinit var label: LinkLabel
+    private lateinit var label: JLabel
+    private lateinit var url: LinkLabel
     private lateinit var qrImage: ImageIcon
+    private lateinit var qrImageContainer: JLabel
+    private lateinit var snackbar: SnackBar
 
     init {
         initView()
     }
 
-    private fun initView(){
-        label = LinkLabel(qrcontent)
+    private fun initView() {
+        label = JLabel()
+        url = LinkLabel(qrcontent, qrcontent, MaterialImageFactory.getInstance().getImage(
+                MaterialIconFont.CONTENT_COPY,
+                25,
+                MaterialColors.COSMO_DARK_GRAY)
+        )
+        url.addMouseListener(object : AbstractSnackBarAction() {
+            override fun mousePressed(e: MouseEvent?) {
+                //TODO Introduce a check of type of content and build an URI by type
+                val stringSelection = StringSelection("%s:%s".format("bitcoin", qrcontent))
+                val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                clipboard.setContents(stringSelection, null)
+                val icon: Icon = MaterialImageFactory.getInstance().getImage(
+                        MaterialIconFont.CLOSE,
+                        25,
+                        MaterialColors.COSMO_DARK_GRAY
+                )
+
+                //The space here resolve the bug described here https://github.com/vincenzopalazzo/material-ui-swing/issues/142
+                snackbar = SnackBar.make(frame, "Copied to clipboard    ", icon)
+                        .setAction(object : AbstractSnackBarAction() {
+                            override fun mousePressed(e: MouseEvent?) {
+                                snackbar.dismiss()
+                            }
+                        })
+                        .setDuration(SnackBar.LENGTH_LONG)
+                        .setGap(60)
+                        .run()
+            }
+        })
+
+        //url.isVisible = false
+
         val imageQr = QRCode.getQrToImage(qrcontent, 300, 300)
         qrImage = ImageIcon(imageQr)
-
+        qrImageContainer = JLabel(qrImage)
         initLayout()
         initActions()
         isVisible = true
     }
 
-    private fun initLayout(){
-        layout = BorderLayout()
-        this.add(JLabel(qrImage), BorderLayout.CENTER)
+    private fun initLayout() {
+        val groupLayout = GroupLayout(this)
+
+        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+                .addGap(50)
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                                .addComponent(url)
+                                .addComponent(qrImageContainer)
+                                .addGap(40)
+                                .addComponent(label)
+                )
+                .addGap(50)
+        )
+
+        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+                .addGap(40)
+                .addComponent(url)
+                .addGap(20)
+                .addComponent(qrImageContainer)
+                .addGap(30)
+                .addComponent(label)
+                .addGap(30)
+        )
+
+        layout = groupLayout
     }
 
-    private fun initActions(){}
+    private fun initActions() {}
 }

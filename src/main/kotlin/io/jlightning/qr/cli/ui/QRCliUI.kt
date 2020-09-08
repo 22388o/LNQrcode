@@ -51,9 +51,9 @@ class QRCliUI: JFrame() {
             evetAfterRunApp = null
         }
 
-        qrUIContainer = QRUIContainer(qrContent)
+        qrUIContainer = QRUIContainer(this, qrContent)
         contentPane = qrUIContainer
-        size = Dimension(500, 350)
+        pack()
         setLocationRelativeTo(null)
         defaultCloseOperation = HIDE_ON_CLOSE
         isVisible = true
