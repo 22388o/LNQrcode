@@ -1,7 +1,5 @@
 # LNQrcode 
 
-(Name under revision!!) If you want propone some names feel free to send an email to vincenzopalazzodev@gmail.com
-
 It is a plugin for c-lightning to display a QR code on a View!
 
 ## Install
