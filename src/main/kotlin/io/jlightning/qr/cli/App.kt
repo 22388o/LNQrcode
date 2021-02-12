@@ -23,7 +23,7 @@ import io.jlightning.qr.cli.plugin.PluginQRCli
 /**
  * @author https://github.com/vincenzopalazzo
  */
-fun main(args: Array<String>) {
+fun main() {
     val qrCli = PluginQRCli()
     qrCli.start()
 }

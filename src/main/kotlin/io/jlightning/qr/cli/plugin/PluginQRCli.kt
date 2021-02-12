@@ -28,6 +28,7 @@ import jrpc.clightning.exceptions.CLightningException
 import jrpc.clightning.model.types.AddressType
 import jrpc.clightning.plugins.CLightningPlugin
 import jrpc.clightning.plugins.log.CLightningLevelLog
+import jrpc.clightning.plugins.log.PluginLog
 import jrpc.service.converters.jsonwrapper.CLightningJsonObject
 import java.lang.Exception
 import javax.swing.SwingUtilities
@@ -40,8 +41,8 @@ class PluginQRCli: CLightningPlugin() {
 
     @RPCMethod(name = "peer-url", description = "generate a per URL with invoice")
     fun peerUrl(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject){
-        plugin.log(CLightningLevelLog.DEBUG, "RPC method qrInvoice")
-        plugin.log(CLightningLevelLog.DEBUG, request)
+        plugin.log(PluginLog.DEBUG, "RPC method qrInvoice")
+        plugin.log(PluginLog.DEBUG, request)
         try{
             val getInfo = CLightningRPC.getInstance().info
             val url = "%s@%s:%s".format(getInfo.id, getInfo.binding[0].address, getInfo.binding[0].port)
@@ -61,8 +62,8 @@ class PluginQRCli: CLightningPlugin() {
 
     @RPCMethod(name = "newaddress", description = "generate a new address and display it on QR code", parameter = "[type]")
     fun generateAddress(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject){
-        plugin.log(CLightningLevelLog.DEBUG, "newaddress")
-        plugin.log(CLightningLevelLog.DEBUG, request)
+        plugin.log(PluginLog.DEBUG, "newaddress")
+        plugin.log(PluginLog.DEBUG, request)
         val listParamter = request["params"].asJsonArray.toList()
         var type = ""
         if(listParamter.isNotEmpty()) type = listParamter[0].asString
@@ -76,7 +77,7 @@ class PluginQRCli: CLightningPlugin() {
         }else{
             newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
         }
-        log(CLightningLevelLog.DEBUG, "New address $newAddr")
+        log(PluginLog.DEBUG, "New address $newAddr")
         QRCliUI.instance.title = "${type.toUpperCase()} address"
         QRCliUI.instance.qrContent = newAddr
         SwingUtilities.invokeLater { QRCliUI.instance.initApp() }
@@ -87,12 +88,12 @@ class PluginQRCli: CLightningPlugin() {
 
     @Subscription(notification = "invoice_creation")
     fun invoiceCrated(data: CLightningJsonObject) {
-        log(CLightningLevelLog.WARNING, data)
+        log(PluginLog.WARNING, data)
         val invoiceCreation = data.get("params").asJsonObject
                                 .get("invoice_creation").asJsonObject
-        log(CLightningLevelLog.WARNING, invoiceCreation)
+        log(PluginLog.WARNING, invoiceCreation)
         val label = invoiceCreation.get("label").asString
-        log(CLightningLevelLog.WARNING, label)
+        log(PluginLog.WARNING, label)
         try{
             QRCliUI.instance.title = "Invoice with label $label"
             QRCliUI.instance.addEventAfterInitApp(object : AfterRunUIAction(){
@@ -106,7 +107,7 @@ class PluginQRCli: CLightningPlugin() {
             }
         }catch (ex: CLightningException){
             ex.printStackTrace()
-            log(CLightningLevelLog.WARNING, ex.localizedMessage)
+            log(PluginLog.WARNING, ex.localizedMessage)
         }
     }
 }

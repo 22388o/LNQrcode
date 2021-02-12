@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph.Companion.build
-
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.71"
+    id("org.jetbrains.kotlin.jvm") version "1.4.30"
     java
     application
 }
@@ -14,13 +12,13 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.material-ui-swing:DarkStackOverflowTheme:0.0.1-rc3")
-    implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.1")
+    implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.2-rc1")
     implementation("io.github.material-ui-swing:LinkLabelUI:0.0.1-rc1")
     implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc1")
     implementation("io.github.material-ui-swing:SwingSnackBar:0.0.1-rc2")
     implementation("com.github.jiconfont:jiconfont:1.0.0") //TODO this is because meterial-ui-swing has a bug
-
-    api(fileTree("${project.projectDir}/devlib") { include("jrpclightning-0.1.6-SNAPSHOT.jar") })
+    implementation("com.google.code.gson:gson:2.8.6") // TODO remove this dependece
+    //api(fileTree("${project.projectDir}/devlib") { include("jrpclightning-0.1.6-SNAPSHOT.jar") })
 
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -29,7 +27,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "io.jlightning.qr.cli.AppKt"
+    mainClass.set("io.jlightning.qr.cli.AppKt")
 }
 
 tasks {
@@ -38,7 +36,7 @@ tasks {
         archiveClassifier.set("all")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         manifest {
-            attributes("Main-Class" to application.mainClassName)
+            attributes("Main-Class" to application.mainClass)
         }
         from(configurations.runtimeClasspath.get()
                 .onEach { println("add from dependencies: ${it.name}") }
