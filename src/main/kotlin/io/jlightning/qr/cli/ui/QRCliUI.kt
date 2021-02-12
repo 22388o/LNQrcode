@@ -20,14 +20,13 @@ package io.jlightning.qr.cli.ui
 
 import io.materialtheme.darkstackoverflow.DarkStackOverflowTheme
 import mdlaf.MaterialLookAndFeel
-import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.UIManager
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-class QRCliUI: JFrame() {
+class QRCliUI : JFrame() {
 
     init {
         UIManager.setLookAndFeel(MaterialLookAndFeel(DarkStackOverflowTheme()))
@@ -37,18 +36,18 @@ class QRCliUI: JFrame() {
         val SINGLETON = QRCliUI()
     }
 
-    companion object{
+    companion object {
         val instance: QRCliUI by lazy { HOLDER.SINGLETON }
     }
 
     internal var qrContent: String = ""
-    private var evetAfterRunApp: AfterRunUIAction? = null
+    private var eventAfterRunApp: AfterRunUIAction? = null
     private lateinit var qrUIContainer: QRUIContainer
 
-    fun initApp(){
-        if(evetAfterRunApp != null){
-            evetAfterRunApp!!.run()
-            evetAfterRunApp = null
+    fun initApp() {
+        if (eventAfterRunApp != null) {
+            eventAfterRunApp!!.run()
+            eventAfterRunApp = null
         }
 
         qrUIContainer = QRUIContainer(this, qrContent)
@@ -59,7 +58,7 @@ class QRCliUI: JFrame() {
         isVisible = true
     }
 
-    fun addEventAfterInitApp(event: AfterRunUIAction){
-        this.evetAfterRunApp = event
+    fun addEventAfterInitApp(event: AfterRunUIAction) {
+        this.eventAfterRunApp = event
     }
 }

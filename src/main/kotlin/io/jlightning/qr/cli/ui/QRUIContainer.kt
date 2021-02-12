@@ -40,6 +40,7 @@ class QRUIContainer(private val frame: JFrame, private val qrcontent: String) : 
 
     private lateinit var label: JLabel
     private lateinit var url: LinkLabel
+    private lateinit var textContent: JTextArea
     private lateinit var qrImage: ImageIcon
     private lateinit var qrImageContainer: JLabel
     private lateinit var snackbar: SnackBar
@@ -50,11 +51,14 @@ class QRUIContainer(private val frame: JFrame, private val qrcontent: String) : 
 
     private fun initView() {
         label = JLabel()
-        url = LinkLabel(qrcontent, qrcontent, MaterialImageFactory.getInstance().getImage(
+        url = LinkLabel(
+            qrcontent, qrcontent, MaterialImageFactory.getInstance().getImage(
                 MaterialIconFont.CONTENT_COPY,
                 25,
-                MaterialColors.COSMO_DARK_GRAY)
+                MaterialColors.COSMO_DARK_GRAY
+            )
         )
+        textContent = JTextArea(qrcontent)
         url.addMouseListener(object : AbstractSnackBarAction() {
             override fun mousePressed(e: MouseEvent?) {
                 //TODO Introduce a check of type of content and build an URI by type
@@ -62,21 +66,22 @@ class QRUIContainer(private val frame: JFrame, private val qrcontent: String) : 
                 val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
                 clipboard.setContents(stringSelection, null)
                 val icon: Icon = MaterialImageFactory.getInstance().getImage(
-                        MaterialIconFont.CLOSE,
-                        25,
-                        MaterialColors.COSMO_DARK_GRAY
+                    MaterialIconFont.CLOSE,
+                    25,
+                    MaterialColors.COSMO_DARK_GRAY
                 )
 
                 //The space here resolve the bug described here https://github.com/vincenzopalazzo/material-ui-swing/issues/142
                 snackbar = SnackBar.make(frame, "Copied to clipboard    ", icon)
-                        .setAction(object : AbstractSnackBarAction() {
-                            override fun mousePressed(e: MouseEvent?) {
-                                snackbar.dismiss()
-                            }
-                        })
-                        .setDuration(SnackBar.LENGTH_LONG)
-                        .setGap(60)
-                        .run()
+                    .setAction(object : AbstractSnackBarAction() {
+                        override fun mousePressed(e: MouseEvent?) {
+                            snackbar.dismiss()
+                        }
+                    })
+                    .setDuration(SnackBar.LENGTH_LONG)
+                    .setSnackBarBackground(MaterialColors.DARKLY_STRONG_BLUE)
+                    .setGap(60)
+                    .run()
             }
         })
 
@@ -93,21 +98,26 @@ class QRUIContainer(private val frame: JFrame, private val qrcontent: String) : 
     private fun initLayout() {
         val groupLayout = GroupLayout(this)
 
-        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+        groupLayout.setHorizontalGroup(
+            groupLayout.createSequentialGroup()
                 .addGap(50)
                 .addGroup(
-                        groupLayout.createParallelGroup()
-                                .addComponent(url)
-                                .addComponent(qrImageContainer)
-                                .addGap(40)
-                                .addComponent(label)
+                    groupLayout.createParallelGroup()
+                        //.addComponent(url)
+                        .addComponent(textContent)
+                        .addComponent(qrImageContainer)
+                        .addGap(40)
+                        .addComponent(label)
+                        .addComponent(label)
                 )
                 .addGap(50)
         )
 
-        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+        groupLayout.setVerticalGroup(
+            groupLayout.createSequentialGroup()
                 .addGap(40)
-                .addComponent(url)
+                //.addComponent(url)
+                .addComponent(textContent)
                 .addGap(20)
                 .addComponent(qrImageContainer)
                 .addGap(30)

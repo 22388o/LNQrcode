@@ -11,13 +11,17 @@ repositories {
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("io.github.clightning4j:jrpclightning:0.1.8")
     implementation("io.github.material-ui-swing:DarkStackOverflowTheme:0.0.1-rc3")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.2-rc1")
     implementation("io.github.material-ui-swing:LinkLabelUI:0.0.1-rc1")
     implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc1")
     implementation("io.github.material-ui-swing:SwingSnackBar:0.0.1-rc2")
-    implementation("com.github.jiconfont:jiconfont:1.0.0") //TODO this is because meterial-ui-swing has a bug
-    implementation("com.google.code.gson:gson:2.8.6") // TODO remove this dependece
+    //TODO the following dependence has problem with kotlin, it looks like it miss to pull from the
+    // maven, but there is somethings that I'm missing
+    implementation("com.github.jiconfont:jiconfont:1.0.0")
+    implementation("com.google.code.gson:gson:2.8.6")
+
     //api(fileTree("${project.projectDir}/devlib") { include("jrpclightning-0.1.6-SNAPSHOT.jar") })
 
 

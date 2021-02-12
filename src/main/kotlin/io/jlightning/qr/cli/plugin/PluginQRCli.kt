@@ -20,14 +20,12 @@ package io.jlightning.qr.cli.plugin
 
 import io.jlightning.qr.cli.ui.AfterRunUIAction
 import io.jlightning.qr.cli.ui.QRCliUI
-import io.vincenzopalazzo.qr.QRCode
 import jrpc.clightning.CLightningRPC
 import jrpc.clightning.annotation.RPCMethod
 import jrpc.clightning.annotation.Subscription
 import jrpc.clightning.exceptions.CLightningException
 import jrpc.clightning.model.types.AddressType
 import jrpc.clightning.plugins.CLightningPlugin
-import jrpc.clightning.plugins.log.CLightningLevelLog
 import jrpc.clightning.plugins.log.PluginLog
 import jrpc.service.converters.jsonwrapper.CLightningJsonObject
 import java.lang.Exception
@@ -36,23 +34,31 @@ import javax.swing.SwingUtilities
 /**
  * @author https://github.com/vincenzopalazzo
  */
-class PluginQRCli: CLightningPlugin() {
-
-
+class PluginQRCli : CLightningPlugin() {
     @RPCMethod(name = "peer-url", description = "generate a per URL with invoice")
-    fun peerUrl(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject){
+    fun peerUrl(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject) {
         plugin.log(PluginLog.DEBUG, "RPC method qrInvoice")
         plugin.log(PluginLog.DEBUG, request)
-        try{
+        try {
             val getInfo = CLightningRPC.getInstance().info
-            val url = "%s@%s:%s".format(getInfo.id, getInfo.binding[0].address, getInfo.binding[0].port)
+            // TODO: choose the tor URL or the first url in the list.
+            // FIXME: I like to ave a combo box where I can the type of address
+            val address = getInfo.address;
+            var url = ""
+            for (add in address) {
+                if (add.type.contains("tor", true))
+                    url ="%s@%s:%s".format(getInfo.id, add.address, add.port)
+            }
+            if (url.isEmpty())
+                url = "%s@%s:%s".format(getInfo.id, getInfo.binding[0].address, getInfo.binding[0].port)
+
             QRCliUI.instance.qrContent = url
             QRCliUI.instance.title = "Node URL"
-            SwingUtilities.invokeLater{ QRCliUI.instance.initApp() }
+            SwingUtilities.invokeLater { QRCliUI.instance.initApp() }
             response.apply {
                 add("node_url", url)
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             response.apply {
                 add("error", e.localizedMessage)
@@ -60,21 +66,25 @@ class PluginQRCli: CLightningPlugin() {
         }
     }
 
-    @RPCMethod(name = "newaddress", description = "generate a new address and display it on QR code", parameter = "[type]")
-    fun generateAddress(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject){
+    @RPCMethod(
+        name = "newaddress",
+        description = "generate a new address and display it on QR code",
+        parameter = "[type]"
+    )
+    fun generateAddress(plugin: CLightningPlugin, request: CLightningJsonObject, response: CLightningJsonObject) {
         plugin.log(PluginLog.DEBUG, "newaddress")
         plugin.log(PluginLog.DEBUG, request)
         val listParamter = request["params"].asJsonArray.toList()
         var type = ""
-        if(listParamter.isNotEmpty()) type = listParamter[0].asString
+        if (listParamter.isNotEmpty()) type = listParamter[0].asString
         val newAddr: String
-        if(type.isNotEmpty()){
-            if(type == AddressType.BECH32.value){
+        if (type.isNotEmpty()) {
+            if (type == AddressType.BECH32.value) {
                 newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
-            }else{
+            } else {
                 newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.P2SH_SEGWIT)
             }
-        }else{
+        } else {
             newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
         }
         log(PluginLog.DEBUG, "New address $newAddr")
@@ -88,15 +98,15 @@ class PluginQRCli: CLightningPlugin() {
 
     @Subscription(notification = "invoice_creation")
     fun invoiceCrated(data: CLightningJsonObject) {
-        log(PluginLog.WARNING, data)
+        log(PluginLog.DEBUG, data)
         val invoiceCreation = data.get("params").asJsonObject
-                                .get("invoice_creation").asJsonObject
-        log(PluginLog.WARNING, invoiceCreation)
+            .get("invoice_creation").asJsonObject
+        log(PluginLog.DEBUG, invoiceCreation)
         val label = invoiceCreation.get("label").asString
-        log(PluginLog.WARNING, label)
-        try{
+        log(PluginLog.DEBUG, label)
+        try {
             QRCliUI.instance.title = "Invoice with label $label"
-            QRCliUI.instance.addEventAfterInitApp(object : AfterRunUIAction(){
+            QRCliUI.instance.addEventAfterInitApp(object : AfterRunUIAction() {
                 override fun run() {
                     val invoice = CLightningRPC.getInstance().listInvoices(label)
                     QRCliUI.instance.qrContent = invoice.listInvoice[0].bolt11
@@ -105,7 +115,7 @@ class PluginQRCli: CLightningPlugin() {
             SwingUtilities.invokeLater {
                 QRCliUI.instance.initApp()
             }
-        }catch (ex: CLightningException){
+        } catch (ex: CLightningException) {
             ex.printStackTrace()
             log(PluginLog.WARNING, ex.localizedMessage)
         }
