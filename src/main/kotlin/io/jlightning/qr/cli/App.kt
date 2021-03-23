@@ -18,12 +18,12 @@
  */
 package io.jlightning.qr.cli
 
-import io.jlightning.qr.cli.plugin.PluginQRCli
+import io.jlightning.qr.cli.plugin.LNQrcode
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
 fun main() {
-    val qrCli = PluginQRCli()
+    val qrCli = LNQrcode()
     qrCli.start()
 }
