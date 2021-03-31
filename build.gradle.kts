@@ -22,7 +22,7 @@ dependencies {
     implementation("io.github.material-ui-swing:DarkStackOverflowTheme:0.0.1-rc3")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.2-rc2-SNAPSHOT")
     implementation("io.github.material-ui-swing:LinkLabelUI:0.0.1-rc1")
-    implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc2")
+    implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc4")
     implementation("io.github.material-ui-swing:SwingSnackBar:0.0.1-rc6")
     //TODO the following dependence has problem with kotlin, it looks like it miss to pull from the
     // maven, but there is somethings that I'm missing
@@ -68,3 +68,4 @@ tasks {
                 """.trimIndent())
     }
 }
+
