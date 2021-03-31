@@ -19,6 +19,7 @@
 package io.jlightning.qr.cli.ui
 
 import io.jlightning.qr.cli.model.Options
+import io.jlightning.qr.cli.plugin.PluginCommand
 import mdlaf.MaterialLookAndFeel
 import mdlaf.themes.MaterialOceanicTheme
 import javax.swing.JFrame
@@ -49,8 +50,14 @@ class QRCliUI : JFrame() {
             eventAfterRunApp!!.run()
             eventAfterRunApp = null
         }
-
-        qrUIContainer = QRUIContainer(this, options.pluginInfo)
+        when (options.command) {
+            PluginCommand.NEW_ADDR, PluginCommand.NEW_INVOICE -> {
+                qrUIContainer = QRUIContainer(this, options)
+            }
+            PluginCommand.PEER_URL -> {
+                return
+            }
+        }
         contentPane = qrUIContainer
         pack()
         setLocationRelativeTo(null)

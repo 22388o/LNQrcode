@@ -20,20 +20,22 @@ package io.jlightning.qr.cli.plugin
 
 import io.jlightning.qr.cli.model.Options
 import io.jlightning.qr.cli.printers.PrinterChain
-import io.jlightning.qr.cli.ui.AfterRunUIAction
-import io.jlightning.qr.cli.ui.QRCliUI
 import jrpc.clightning.CLightningRPC
 import jrpc.clightning.annotation.PluginOption
 import jrpc.clightning.annotation.RPCMethod
 import jrpc.clightning.annotation.Subscription
-import jrpc.clightning.exceptions.CLightningException
 import jrpc.clightning.model.types.AddressType
 import jrpc.clightning.model.types.NetworkAddress
 import jrpc.clightning.plugins.CLightningPlugin
 import jrpc.clightning.plugins.log.PluginLog
 import jrpc.service.converters.jsonwrapper.CLightningJsonObject
-import java.lang.Exception
-import javax.swing.SwingUtilities
+import kotlin.Exception
+
+enum class PluginCommand {
+    PEER_URL,
+    NEW_ADDR,
+    NEW_INVOICE,
+}
 
 /**
  * @author https://github.com/vincenzopalazzo
@@ -73,6 +75,7 @@ class LNQrcode : CLightningPlugin() {
         try {
             val getInfo = CLightningRPC.getInstance().info
             options.pluginInfo.listAddresses = getInfo.address as ArrayList<NetworkAddress>
+            options.command = PluginCommand.PEER_URL
             PrinterChain.print(plugin, options, response)
         } catch (e: Exception) {
             plugin.log(PluginLog.ERROR, e.localizedMessage)
@@ -91,9 +94,10 @@ class LNQrcode : CLightningPlugin() {
         plugin.log(PluginLog.DEBUG, "newaddress")
         plugin.log(PluginLog.DEBUG, request)
         this.initPlugin(plugin)
-        val listParamter = request["params"].asJsonArray.toList()
+        options.command = PluginCommand.NEW_ADDR
+        val listParameter = request["params"].asJsonArray.toList()
         var type = ""
-        if (listParamter.isNotEmpty()) type = listParamter[0].asString
+        if (listParameter.isNotEmpty()) type = listParameter[0].asString
         val newAddr: String
         if (type.isNotEmpty()) {
             if (type == AddressType.BECH32.value) {
@@ -105,12 +109,8 @@ class LNQrcode : CLightningPlugin() {
             newAddr = CLightningRPC.getInstance().newAddress(AddressType.BECH32)
         }
         log(PluginLog.DEBUG, "New address $newAddr")
-        QRCliUI.instance.title = "${type.toUpperCase()} address"
-        // QRCliUI.instance.qrContent = newAddr
-        // SwingUtilities.invokeLater { QRCliUI.instance.initApp() }
-        response.apply {
-            add("address", newAddr)
-        }
+        options.pluginInfo.addressGenerated = newAddr
+        PrinterChain.print(plugin, options, response)
     }
 
     @Subscription(notification = "invoice_creation")
@@ -123,17 +123,11 @@ class LNQrcode : CLightningPlugin() {
         val label = invoiceCreation.get("label").asString
         log(PluginLog.DEBUG, label)
         try {
-            QRCliUI.instance.title = "Invoice with label $label"
-            QRCliUI.instance.addEventAfterInitApp(object : AfterRunUIAction() {
-                override fun run() {
-                    val invoice = CLightningRPC.getInstance().listInvoices(label)
-                    // QRCliUI.instance.qrContent = invoice.listInvoice[0].bolt11
-                }
-            })
-            SwingUtilities.invokeLater {
-                // QRCliUI.instance.initApp()
-            }
-        } catch (ex: CLightningException) {
+            val invoice = CLightningRPC.getInstance().listInvoices(label)
+            options.pluginInfo.invoice = invoice.listInvoice[0].bolt11
+            // Fake JSON object as response.
+            PrinterChain.print(this, options, CLightningJsonObject())
+        } catch (ex: Exception) {
             ex.printStackTrace()
             log(PluginLog.WARNING, ex.localizedMessage)
         }

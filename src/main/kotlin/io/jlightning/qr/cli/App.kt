@@ -1,6 +1,6 @@
 /**
  *     C-lightning plugin to create a small QR code when lightningd made somethings
- *     Copyright (C) 2020 Vincenzo Palazzo vincenzopalazzodev@gmail.com
+ *     Copyright (C) 2020-2021 Vincenzo Palazzo vincenzopalazzodev@gmail.com
  *
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by

@@ -16,23 +16,41 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package io.jlightning.qr.cli.printers.gui
+package io.jlightning.qr.cli.printers.console
 
 import io.jlightning.qr.cli.model.Options
+import io.jlightning.qr.cli.plugin.PluginCommand
 import io.jlightning.qr.cli.printers.IPrinter
-import io.jlightning.qr.cli.ui.QRCliUI
+import io.vincenzopalazzo.qr.QRCode
 import jrpc.clightning.plugins.CLightningPlugin
 import jrpc.service.converters.jsonwrapper.CLightningJsonObject
-import javax.swing.SwingUtilities
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-class GUIPrinter : IPrinter {
+class ConsolePrinter : IPrinter {
     override fun print(plugin: CLightningPlugin, options: Options, response: CLightningJsonObject) {
-        if (options.nodeConf.toDesktopGUI) {
-            QRCliUI.instance.title = "LNQRCode"
-            SwingUtilities.invokeLater { QRCliUI.instance.initApp(options) }
+        if (!options.nodeConf.toConsole)
+            return
+        when (options.command) {
+            PluginCommand.NEW_ADDR -> {
+                val qrCodeString = QRCode.getQrToString(options.pluginInfo.addressGenerated, 30, 30)
+                response.apply {
+                    response.add("address", qrCodeString)
+                }
+            }
+            PluginCommand.PEER_URL -> {
+                options.pluginInfo.listAddresses.forEach {
+                    val qr = QRCode.getQrToString(it.address, 40, 40)
+                    response.apply {
+                        response.add(it.type, qr)
+                    }
+                }
+            }
+            PluginCommand.NEW_INVOICE -> {
+                // TODO not involved because it is a listener method and not a rpc method.
+                // this mean that we don't have the response object
+            }
         }
     }
 }
