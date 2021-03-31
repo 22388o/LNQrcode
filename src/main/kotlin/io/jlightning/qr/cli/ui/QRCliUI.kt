@@ -19,8 +19,8 @@
 package io.jlightning.qr.cli.ui
 
 import io.jlightning.qr.cli.model.Options
-import io.materialtheme.darkstackoverflow.DarkStackOverflowTheme
 import mdlaf.MaterialLookAndFeel
+import mdlaf.themes.MaterialOceanicTheme
 import javax.swing.JFrame
 import javax.swing.UIManager
 
@@ -30,7 +30,7 @@ import javax.swing.UIManager
 class QRCliUI : JFrame() {
 
     init {
-        UIManager.setLookAndFeel(MaterialLookAndFeel(DarkStackOverflowTheme()))
+        UIManager.setLookAndFeel(MaterialLookAndFeel(MaterialOceanicTheme()))
     }
 
     private object HOLDER {

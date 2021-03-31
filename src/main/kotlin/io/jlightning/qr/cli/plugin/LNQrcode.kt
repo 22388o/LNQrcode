@@ -97,12 +97,12 @@ class LNQrcode : CLightningPlugin() {
         val newAddr: String
         if (type.isNotEmpty()) {
             if (type == AddressType.BECH32.value) {
-                newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
+                newAddr = CLightningRPC.getInstance().newAddress(AddressType.BECH32)
             } else {
-                newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.P2SH_SEGWIT)
+                newAddr = CLightningRPC.getInstance().newAddress(AddressType.P2SH_SEGWIT)
             }
         } else {
-            newAddr = CLightningRPC.getInstance().getNewAddress(AddressType.BECH32)
+            newAddr = CLightningRPC.getInstance().newAddress(AddressType.BECH32)
         }
         log(PluginLog.DEBUG, "New address $newAddr")
         QRCliUI.instance.title = "${type.toUpperCase()} address"
