@@ -11,8 +11,7 @@ jobs:
         with:
           java-version: 11
       - name: Check Kotling format
-          run: ./gradlew lintKotlin
+        run: ./gradlew lintKotlin
       - name: Build with Gradle
         run: |
           ./gradlew createRunnableScript
-          cat btcli4j-gen.sh
