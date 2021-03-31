@@ -124,8 +124,9 @@ class LNQrcode : CLightningPlugin() {
         log(PluginLog.DEBUG, label)
         try {
             val invoice = CLightningRPC.getInstance().listInvoices(label)
+            options.command = PluginCommand.NEW_INVOICE
             options.pluginInfo.invoice = invoice.listInvoice[0].bolt11
-            // Fake JSON object as response.
+            // Fake JSON object as response to make happy the console printer.
             PrinterChain.print(this, options, CLightningJsonObject())
         } catch (ex: Exception) {
             ex.printStackTrace()

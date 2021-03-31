@@ -22,7 +22,7 @@ dependencies {
     implementation("io.github.material-ui-swing:DarkStackOverflowTheme:0.0.1-rc3")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.2-rc2-SNAPSHOT")
     implementation("io.github.material-ui-swing:LinkLabelUI:0.0.1-rc1")
-    implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc1")
+    implementation("io.github.vincenzopalazzo:JQRInterface:0.0.1-rc2")
     implementation("io.github.material-ui-swing:SwingSnackBar:0.0.1-rc6")
     //TODO the following dependence has problem with kotlin, it looks like it miss to pull from the
     // maven, but there is somethings that I'm missing
@@ -62,8 +62,8 @@ tasks {
         file("${projectDir}/${project.name}-gen.sh").createNewFile()
         file("${projectDir}/${project.name}-gen.sh").writeText(
                 """
-                # Script generated from gradle! By clightning4j
                 #!/bin/bash
+                # Script generated from gradle! By clightning4j
                 ${System.getProperties().getProperty("java.home")}/bin/java -jar ${project.buildDir.absolutePath}/libs/${project.name}-all.jar
                 """.trimIndent())
     }
