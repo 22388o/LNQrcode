@@ -16,14 +16,23 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package io.jlightning.qr.cli
+package io.jlightning.qr.cli.printers.gui
 
-import io.jlightning.qr.cli.plugin.LNQrcode
+import io.jlightning.qr.cli.model.Options
+import io.jlightning.qr.cli.printers.IPrinter
+import io.jlightning.qr.cli.ui.QRCliUI
+import jrpc.clightning.plugins.CLightningPlugin
+import jrpc.service.converters.jsonwrapper.CLightningJsonObject
+import javax.swing.SwingUtilities
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-fun main() {
-    val qrCli = LNQrcode()
-    qrCli.start()
+class GUIPrinter : IPrinter {
+    override fun print(plugin: CLightningPlugin, options: Options, response: CLightningJsonObject) {
+        if (options.nodeConf.toDesktopGUI) {
+            QRCliUI.instance.title = "LNQRCode"
+            SwingUtilities.invokeLater { QRCliUI.instance.initApp(options) }
+        }
+    }
 }

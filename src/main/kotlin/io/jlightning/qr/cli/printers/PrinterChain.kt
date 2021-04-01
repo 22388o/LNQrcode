@@ -16,14 +16,31 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package io.jlightning.qr.cli
+package io.jlightning.qr.cli.printers
 
-import io.jlightning.qr.cli.plugin.LNQrcode
+import io.jlightning.qr.cli.model.Options
+import io.jlightning.qr.cli.printers.console.ConsolePrinter
+import io.jlightning.qr.cli.printers.gui.GUIPrinter
+import jrpc.clightning.plugins.CLightningPlugin
+import jrpc.service.converters.jsonwrapper.CLightningJsonObject
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-fun main() {
-    val qrCli = LNQrcode()
-    qrCli.start()
+object PrinterChain {
+    private var printers = ArrayList<IPrinter>()
+
+    init {
+        printers.addAll(
+            listOf(
+                GUIPrinter(),
+                ConsolePrinter()
+            )
+        )
+    }
+
+    fun print(plugin: CLightningPlugin, options: Options, response: CLightningJsonObject) {
+        for (printer in printers)
+            printer.print(plugin, options, response)
+    }
 }

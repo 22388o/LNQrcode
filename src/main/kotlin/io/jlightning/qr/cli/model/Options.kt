@@ -16,14 +16,29 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package io.jlightning.qr.cli
+package io.jlightning.qr.cli.model
 
-import io.jlightning.qr.cli.plugin.LNQrcode
+import io.jlightning.qr.cli.plugin.PluginCommand
+import jrpc.clightning.model.types.NetworkAddress
 
 /**
  * @author https://github.com/vincenzopalazzo
  */
-fun main() {
-    val qrCli = LNQrcode()
-    qrCli.start()
+class Options {
+
+    lateinit var command: PluginCommand
+    val nodeConf = CLightningConf()
+    val pluginInfo = PluginInfo()
+
+    class CLightningConf {
+        var toConsole: Boolean = false
+        var toDesktopGUI: Boolean = false
+        var toWebUI: Boolean = false
+    }
+
+    class PluginInfo {
+        var listAddresses = ArrayList<NetworkAddress>()
+        lateinit var addressGenerated: String
+        lateinit var invoice: String
+    }
 }
